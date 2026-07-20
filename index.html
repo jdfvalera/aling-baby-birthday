@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aling Baby's 70th Birthday</title>
+</head>
+<body>
 <canvas id="fxCanvas" class="fx-canvas" aria-hidden="true"></canvas>
 <button type="button" id="musicToggle" class="music-toggle" aria-pressed="false">
   <span class="music-icon" aria-hidden="true">&#9835;</span>
@@ -125,6 +133,7 @@
     <footer class="footer">
       <p>Paki-sagot bago sumapit ang Hulyo 25 para makapaghanda kami nang maayos.</p>
       <p class="footer-love">Mahal na mahal ka namin, Aling Baby!</p>
+      <a href="larawan.html" class="gallery-link">Tignan ang mga larawan ni Aling Baby &rarr;</a>
     </footer>
   </div>
 </main>
@@ -592,6 +601,19 @@
     color: var(--coral-deep);
   }
 
+  .gallery-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(140, 107, 39, 0.45);
+  }
+
+  .gallery-link:hover {
+    color: var(--coral-deep);
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .card {
       animation: rise 0.7s ease both;
@@ -947,3 +969,5 @@
     });
   })();
 </script>
+</body>
+</html>
