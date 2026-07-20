@@ -1152,11 +1152,18 @@
       lightbox.hidden = false;
     }
 
-    function fillTrack(track, start, end) {
-      var srcs = [];
-      for (var n = start; n <= end; n++) {
-        srcs.push(photoSrc(n));
+    function shuffle(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
       }
+      return arr;
+    }
+
+    function fillTrack(track, numbers) {
+      var srcs = numbers.map(photoSrc);
       // duplicate the list so the CSS animation (0 to -50%) loops seamlessly
       var doubled = srcs.concat(srcs);
       doubled.forEach(function (src, idx) {
@@ -1171,16 +1178,20 @@
       });
     }
 
-    fillTrack(track1, 1, HALF);
-    fillTrack(track2, HALF + 1, TOTAL_PHOTOS);
+    var photoOrder = [];
+    for (var p = 1; p <= TOTAL_PHOTOS; p++) photoOrder.push(p);
+    shuffle(photoOrder);
+
+    fillTrack(track1, photoOrder.slice(0, HALF));
+    fillTrack(track2, photoOrder.slice(HALF));
 
     // mobile-only horizontal strips (top / mid / bottom)
     var stripTop = document.getElementById("stripTop");
     var stripMid = document.getElementById("stripMid");
     var stripBottom = document.getElementById("stripBottom");
-    fillTrack(stripTop, 1, 15);
-    fillTrack(stripMid, 16, 30);
-    fillTrack(stripBottom, 31, 44);
+    fillTrack(stripTop, photoOrder.slice(0, 15));
+    fillTrack(stripMid, photoOrder.slice(15, 30));
+    fillTrack(stripBottom, photoOrder.slice(30, 44));
 
     function closeLightbox() {
       lightbox.hidden = true;
