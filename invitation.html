@@ -72,6 +72,10 @@
           Chesnut cor Coconut, Greenwoods Executive Village
         </p>
       </div>
+      <div class="detail-row">
+        <p class="label">Attire</p>
+        <p class="value">Gold, rose gold, o white</p>
+      </div>
     </section>
 
     <div class="divider"><span></span><i></i><span></span></div>
@@ -95,13 +99,13 @@
       </div>
 
       <div class="field">
-        <label>Sino pa ang kasama mo?</label>
+        <label>Sino ang kasama mo? (isa lang po)</label>
         <div class="companions" id="companionsList">
           <div class="companion-row">
             <input
               type="text"
               class="companion-input"
-              placeholder="Pangalan ng kasama"
+              placeholder="Pangalan ng kasama (kung meron)"
             />
             <button
               type="button"
@@ -112,9 +116,6 @@
             </button>
           </div>
         </div>
-        <button type="button" id="addCompanion" class="add-btn">
-          + Magdagdag ng kasama
-        </button>
       </div>
 
       <div class="field">
@@ -738,23 +739,6 @@
     background: rgba(232, 96, 76, 0.12);
   }
 
-  .add-btn {
-    background: transparent;
-    border: none;
-    color: var(--gold);
-    font-size: 0.9rem;
-    font-style: italic;
-    cursor: pointer;
-    padding: 0.2rem 0;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: rgba(140, 107, 39, 0.45);
-  }
-
-  .add-btn:hover {
-    color: var(--coral-deep);
-  }
-
   .form-notice {
     color: var(--coral-deep);
     font-size: 0.88rem;
@@ -946,7 +930,6 @@
     var FORMSPREE_ENDPOINT = "https://formspree.io/f/xaqrjobp";
 
     var companionsList = document.getElementById("companionsList");
-    var addCompanionBtn = document.getElementById("addCompanion");
     var guestNameInput = document.getElementById("guestName");
     var guestMessageInput = document.getElementById("guestMessage");
     var formNotice = document.getElementById("formNotice");
@@ -954,33 +937,6 @@
     var errorNotice = document.getElementById("errorNotice");
     var sendBtn = document.getElementById("sendRsvp");
     var sendBtnLabel = sendBtn.querySelector(".send-btn-label");
-
-    function makeCompanionRow() {
-      var row = document.createElement("div");
-      row.className = "companion-row";
-
-      var input = document.createElement("input");
-      input.type = "text";
-      input.className = "companion-input";
-      input.placeholder = "Pangalan ng kasama";
-
-      var removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "remove-btn";
-      removeBtn.setAttribute("aria-label", "Alisin ang kasamang ito");
-      removeBtn.innerHTML = "&times;";
-      removeBtn.addEventListener("click", function () {
-        row.remove();
-      });
-
-      row.appendChild(input);
-      row.appendChild(removeBtn);
-      return row;
-    }
-
-    addCompanionBtn.addEventListener("click", function () {
-      companionsList.appendChild(makeCompanionRow());
-    });
 
     companionsList
       .querySelectorAll(".remove-btn")
