@@ -19,6 +19,10 @@
   </div>
 
   <div class="card">
+    <div class="mobile-strip">
+      <div class="mobile-strip-track" id="stripTop"></div>
+    </div>
+
     <div class="ornament">
       <span></span>
       <i></i>
@@ -43,6 +47,12 @@
       </p>
       <p class="invite-line">Dumating ka lang, bahala na kami sa saya!</p>
     </section>
+
+    <div class="divider"><span></span><i></i><span></span></div>
+
+    <div class="mobile-strip">
+      <div class="mobile-strip-track strip-reverse" id="stripMid"></div>
+    </div>
 
     <div class="divider"><span></span><i></i><span></span></div>
 
@@ -147,6 +157,12 @@
         </p>
       </div>
     </section>
+
+    <div class="divider"><span></span><i></i><span></span></div>
+
+    <div class="mobile-strip">
+      <div class="mobile-strip-track" id="stripBottom"></div>
+    </div>
 
     <footer class="footer">
       <p>Paki-sagot bago sumapit ang Hulyo 25 para makapaghanda kami nang maayos.</p>
@@ -508,6 +524,68 @@
   @media (prefers-reduced-motion: reduce) {
     .side-rail {
       overflow-y: auto;
+    }
+  }
+
+  .mobile-strip {
+    display: none;
+    overflow: hidden;
+  }
+
+  @media (max-width: 900px) {
+    .mobile-strip {
+      display: block;
+    }
+  }
+
+  .mobile-strip-track {
+    display: flex;
+    gap: 0.5rem;
+    width: max-content;
+  }
+
+  .mobile-strip-track img {
+    height: 5.5rem;
+    width: auto;
+    display: block;
+    border-radius: 2px;
+    border: 1px solid var(--hairline);
+    box-shadow: 0 0.3rem 0.8rem rgba(58, 44, 34, 0.15);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mobile-strip-track {
+      animation: stripLeft 90s linear infinite;
+    }
+
+    .mobile-strip-track.strip-reverse {
+      animation-name: stripRight;
+    }
+
+    @keyframes stripLeft {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes stripRight {
+      from {
+        transform: translateX(-50%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-strip {
+      overflow-x: auto;
     }
   }
 
@@ -1204,6 +1282,14 @@
 
     fillTrack(track1, 1, HALF);
     fillTrack(track2, HALF + 1, TOTAL_PHOTOS);
+
+    // mobile-only horizontal strips (top / mid / bottom)
+    var stripTop = document.getElementById("stripTop");
+    var stripMid = document.getElementById("stripMid");
+    var stripBottom = document.getElementById("stripBottom");
+    fillTrack(stripTop, 1, 15);
+    fillTrack(stripMid, 16, 30);
+    fillTrack(stripBottom, 31, 44);
 
     function closeLightbox() {
       lightbox.hidden = true;
