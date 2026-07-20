@@ -1088,16 +1088,21 @@
       musicLabel.textContent = on ? "Naka-on" : "Tugtog";
     }
 
+    var INTERACTION_EVENTS = ["click", "touchstart", "keydown", "scroll"];
+
     function goAudible() {
       if (!ytReady || audible) return;
       audible = true;
       ytPlayer.unMute();
       ytPlayer.playVideo();
       setMusicUI(true);
+      INTERACTION_EVENTS.forEach(function (evt) {
+        document.removeEventListener(evt, goAudible);
+      });
     }
 
-    ["click", "touchstart", "keydown", "scroll"].forEach(function (evt) {
-      document.addEventListener(evt, goAudible, { once: true, passive: true });
+    INTERACTION_EVENTS.forEach(function (evt) {
+      document.addEventListener(evt, goAudible, { passive: true });
     });
 
     window.onYouTubeIframeAPIReady = function () {
