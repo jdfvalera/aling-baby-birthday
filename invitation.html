@@ -11,8 +11,16 @@
   <span class="music-icon" aria-hidden="true">&#9835;</span>
   <span class="music-label">Tugtog</span>
 </button>
+<div id="ytPlayer" class="yt-player-hidden" aria-hidden="true"></div>
 
 <main class="invite">
+  <div class="side-rail side-rail-left" aria-hidden="true">
+    <div class="rail-track" id="railTrackLeft"></div>
+  </div>
+  <div class="side-rail side-rail-right" aria-hidden="true">
+    <div class="rail-track rail-reverse" id="railTrackRight"></div>
+  </div>
+
   <div class="card">
     <div class="ornament">
       <span></span>
@@ -37,18 +45,6 @@
         pagmamahal, kaya gusto namin na makasama ka sa pagdiriwang na 'to.
       </p>
       <p class="invite-line">Dumating ka lang, bahala na kami sa saya!</p>
-    </section>
-
-    <div class="divider"><span></span><i></i><span></span></div>
-
-    <section class="photos">
-      <p class="label photos-label">Mga Alaala</p>
-      <div class="marquee-row">
-        <div class="marquee-track" id="marqueeTrack1"></div>
-      </div>
-      <div class="marquee-row">
-        <div class="marquee-track marquee-reverse" id="marqueeTrack2"></div>
-      </div>
     </section>
 
     <div class="divider"><span></span><i></i><span></span></div>
@@ -167,6 +163,7 @@
     --ink: #3a2c22;
     --ink-muted: #5e4c3e;
     --hairline: rgba(140, 107, 39, 0.38);
+    --rail-w: clamp(3.4rem, 16vw, 10rem);
     --font-display: "Didot", "Bodoni MT", "Big Caslon", "Playfair Display",
       Georgia, "Iowan Old Style", serif;
     --font-body: "Athelas", "Iowan Old Style", Georgia, "Times New Roman",
@@ -220,6 +217,17 @@
     border-color: rgba(232, 96, 76, 0.5);
   }
 
+  .yt-player-hidden {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .music-toggle.is-playing .music-icon {
       animation: musicPulse 0.6s ease-in-out infinite;
@@ -243,7 +251,7 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: clamp(1.5rem, 5vw, 4rem) 1rem;
+    padding: clamp(1.5rem, 5vw, 4rem) calc(var(--rail-w) + 0.75rem);
     background: radial-gradient(
         circle at 50% -10%,
         #f6dcc9 0%,
@@ -411,29 +419,35 @@
     color: var(--gold);
   }
 
-  .photos-label {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-
-  .marquee-row {
+  .side-rail {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: var(--rail-w);
     overflow: hidden;
-    margin-bottom: 0.75rem;
+    z-index: 1;
   }
 
-  .marquee-row:last-child {
-    margin-bottom: 0;
+  .side-rail-left {
+    left: 0;
   }
 
-  .marquee-track {
+  .side-rail-right {
+    right: 0;
+  }
+
+  .rail-track {
     display: flex;
-    gap: 0.6rem;
-    width: max-content;
+    flex-direction: column;
+    gap: 0.55rem;
+    width: 100%;
+    padding: 0.55rem;
   }
 
-  .marquee-track img {
-    height: 6.5rem;
-    width: auto;
+  .rail-track img {
+    width: 100%;
+    height: auto;
+    display: block;
     border-radius: 2px;
     border: 1px solid var(--hairline);
     box-shadow: 0 0.3rem 0.8rem rgba(58, 44, 34, 0.15);
@@ -441,45 +455,45 @@
     flex-shrink: 0;
   }
 
-  .marquee-track img:hover {
+  .rail-track img:hover {
     outline: 2px solid var(--gold);
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .marquee-track {
-      animation: marqueeLeft 55s linear infinite;
+    .rail-track {
+      animation: railUp 70s linear infinite;
     }
 
-    .marquee-track.marquee-reverse {
-      animation-name: marqueeRight;
+    .rail-track.rail-reverse {
+      animation-name: railDown;
     }
 
-    .marquee-row:hover .marquee-track {
+    .side-rail:hover .rail-track {
       animation-play-state: paused;
     }
 
-    @keyframes marqueeLeft {
+    @keyframes railUp {
       from {
-        transform: translateX(0);
+        transform: translateY(0);
       }
       to {
-        transform: translateX(-50%);
+        transform: translateY(-50%);
       }
     }
 
-    @keyframes marqueeRight {
+    @keyframes railDown {
       from {
-        transform: translateX(-50%);
+        transform: translateY(-50%);
       }
       to {
-        transform: translateX(0);
+        transform: translateY(0);
       }
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .marquee-row {
-      overflow-x: auto;
+    .side-rail {
+      overflow-y: auto;
     }
   }
 
@@ -780,6 +794,7 @@
   }
 </style>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
   (function () {
     var FORMSPREE_ENDPOINT = "https://formspree.io/f/xaqrjobp";
@@ -1017,71 +1032,64 @@
       requestAnimationFrame(tick);
     }
 
-    // --- Synthesized music-box loop (no external audio, so no licensing to worry about) ---
+    // --- Background music via YouTube (hidden player, audio only) ---
+    var YT_VIDEO_ID = "8NVYNAEyw5E";
     var musicToggle = document.getElementById("musicToggle");
     var musicLabel = musicToggle.querySelector(".music-label");
-    var audioCtx = null;
-    var musicTimer = null;
+    var ytPlayer = null;
+    var ytReady = false;
     var musicPlaying = false;
-    var MELODY = [
-      523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25, 659.25, 783.99,
-      880.0, 783.99, 659.25,
-    ];
-    var NOTE_DUR = 0.42;
+    var pendingPlay = false;
 
-    function ensureAudioCtx() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      return audioCtx;
-    }
-
-    function playNote(freq, startTime, duration) {
-      var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator();
-      var gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0, startTime);
-      gain.gain.linearRampToValueAtTime(0.06, startTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(startTime);
-      osc.stop(startTime + duration + 0.05);
-    }
-
-    function scheduleLoop() {
-      var ctx = ensureAudioCtx();
-      var startTime = ctx.currentTime + 0.05;
-      MELODY.forEach(function (freq, i) {
-        playNote(freq, startTime + i * NOTE_DUR, NOTE_DUR * 0.9);
+    window.onYouTubeIframeAPIReady = function () {
+      ytPlayer = new YT.Player("ytPlayer", {
+        height: "0",
+        width: "0",
+        videoId: YT_VIDEO_ID,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          loop: 1,
+          playlist: YT_VIDEO_ID,
+        },
+        events: {
+          onReady: function () {
+            ytReady = true;
+            if (pendingPlay) {
+              ytPlayer.playVideo();
+              pendingPlay = false;
+            }
+          },
+        },
       });
-      musicTimer = setTimeout(scheduleLoop, MELODY.length * NOTE_DUR * 1000);
-    }
+    };
 
     musicToggle.addEventListener("click", function () {
-      var ctx = ensureAudioCtx();
       if (musicPlaying) {
-        clearTimeout(musicTimer);
         musicPlaying = false;
         musicToggle.setAttribute("aria-pressed", "false");
         musicToggle.classList.remove("is-playing");
         musicLabel.textContent = "Tugtog";
+        if (ytReady) ytPlayer.pauseVideo();
+        pendingPlay = false;
       } else {
-        if (ctx.state === "suspended") ctx.resume();
-        scheduleLoop();
         musicPlaying = true;
         musicToggle.setAttribute("aria-pressed", "true");
         musicToggle.classList.add("is-playing");
         musicLabel.textContent = "Naka-on";
+        if (ytReady) {
+          ytPlayer.playVideo();
+        } else {
+          pendingPlay = true;
+        }
       }
     });
 
-    // --- Photo marquee + lightbox ---
+    // --- Side photo rails + lightbox ---
     var TOTAL_PHOTOS = 44;
     var HALF = TOTAL_PHOTOS / 2;
-    var track1 = document.getElementById("marqueeTrack1");
-    var track2 = document.getElementById("marqueeTrack2");
+    var track1 = document.getElementById("railTrackLeft");
+    var track2 = document.getElementById("railTrackRight");
     var lightbox = document.getElementById("lightbox");
     var lightboxImg = document.getElementById("lightboxImg");
     var lightboxClose = document.getElementById("lightboxClose");
