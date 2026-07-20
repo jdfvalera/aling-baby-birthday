@@ -1,0 +1,660 @@
+<main class="invite">
+  <div class="card">
+    <div class="ornament">
+      <span></span>
+      <i></i>
+      <span></span>
+    </div>
+
+    <header class="hero">
+      <p class="eyebrow">Isang Gintong Pagdiriwang</p>
+      <div class="numeral-wrap">
+        <span class="numeral" aria-hidden="true">70</span>
+        <h1 class="name">Aling Baby</h1>
+      </div>
+      <p class="sub">Ika-70 na Kaarawan</p>
+    </header>
+
+    <div class="divider"><span></span><i></i><span></span></div>
+
+    <section class="message">
+      <p>
+        Pitumpung taon ng pagmamahal, kwento, at biyaya — sapat na dahilan para
+        magtipon-tipon, magsaya, at magpasalamat. Sama-sama nating gawing
+        makulay ang araw na ito para kay Aling Baby.
+      </p>
+      <p class="invite-line">Kasama ka namin sa munting handaan na ito!</p>
+    </section>
+
+    <div class="divider"><span></span><i></i><span></span></div>
+
+    <section class="details">
+      <div class="detail-row">
+        <p class="label">Petsa</p>
+        <p class="value">Agosto 1, 2026 &middot; Sabado</p>
+      </div>
+      <div class="detail-row">
+        <p class="label">Oras</p>
+        <p class="value">6:00 ng gabi</p>
+      </div>
+      <div class="detail-row">
+        <p class="label">Lugar</p>
+        <p class="value">
+          Bravissimo Events &amp; Cafe<br />
+          Chesnut cor Coconut, Greenwoods Executive Village
+        </p>
+      </div>
+    </section>
+
+    <div class="divider"><span></span><i></i><span></span></div>
+
+    <section class="rsvp">
+      <h2>Sasama ka ba?</h2>
+      <p class="rsvp-sub">
+        Paki-sagot na lang para malaman namin kung sino ang aming aabangan.
+      </p>
+
+      <div class="field">
+        <label for="guestName">Pangalan mo</label>
+        <input
+          type="text"
+          id="guestName"
+          placeholder="Hal. Maria Santos"
+          autocomplete="name"
+        />
+      </div>
+
+      <div class="field">
+        <label>Sino pa ang kasama mo?</label>
+        <div class="companions" id="companionsList">
+          <div class="companion-row">
+            <input
+              type="text"
+              class="companion-input"
+              placeholder="Pangalan ng kasama"
+            />
+            <button
+              type="button"
+              class="remove-btn"
+              aria-label="Alisin ang kasamang ito"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+        <button type="button" id="addCompanion" class="add-btn">
+          + Magdagdag ng kasama
+        </button>
+      </div>
+
+      <div class="field">
+        <label for="guestMessage">May gusto kang ipaabot? (opsyonal)</label>
+        <textarea
+          id="guestMessage"
+          rows="2"
+          placeholder="Isulat dito ang mensahe mo para kay Aling Baby"
+        ></textarea>
+      </div>
+
+      <p id="formNotice" class="form-notice" hidden>
+        Paki-lagay muna ang iyong pangalan bago magpadala.
+      </p>
+
+      <div class="send-actions">
+        <a href="#" id="sendEmail" class="send-btn">
+          <span class="send-btn-label">Ipadala sa Email</span>
+        </a>
+        <a href="#" id="sendSms" class="send-btn send-btn-alt">
+          <span class="send-btn-label">Ipadala sa Text</span>
+        </a>
+      </div>
+
+      <p id="confirmNotice" class="confirm-notice" hidden>
+        Salamat! Kumpletuhin na lang ang pagpapadala sa app na bubukas.
+      </p>
+    </section>
+
+    <footer class="footer">
+      <p>Paki-sagot bago sumapit ang Agosto 1 para makapaghanda kami nang maayos.</p>
+      <p class="footer-love">Mahal na mahal ka namin, Aling Baby!</p>
+    </footer>
+  </div>
+</main>
+
+<style>
+  :root {
+    --ground: #f7efdf;
+    --ground-deep: #ede0c8;
+    --panel: #fcf8ee;
+    --panel-deep: #f2e6ce;
+    --gold: #8c6b27;
+    --gold-soft: #d2aa5c;
+    --coral: #e8604c;
+    --coral-deep: #b8462f;
+    --ink: #3a2c22;
+    --ink-muted: #5e4c3e;
+    --hairline: rgba(140, 107, 39, 0.38);
+    --font-display: "Didot", "Bodoni MT", "Big Caslon", "Playfair Display",
+      Georgia, "Iowan Old Style", serif;
+    --font-body: "Athelas", "Iowan Old Style", Georgia, "Times New Roman",
+      serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .invite {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: clamp(1.5rem, 5vw, 4rem) 1rem;
+    background: radial-gradient(
+        circle at 50% -10%,
+        #f6dcc9 0%,
+        var(--ground) 45%,
+        var(--ground-deep) 100%
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(58, 44, 34, 0.015) 0px,
+        rgba(58, 44, 34, 0.015) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    font-family: var(--font-body);
+    color: var(--ink);
+  }
+
+  .card {
+    width: 100%;
+    max-width: 30rem;
+    background: linear-gradient(180deg, var(--panel), var(--panel-deep) 90%);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    padding: clamp(2rem, 6vw, 3.25rem) clamp(1.5rem, 6vw, 2.75rem) 2.5rem;
+    box-shadow: 0 1.5rem 3rem rgba(58, 44, 34, 0.18),
+      inset 0 0 0 1px rgba(140, 107, 39, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0.5rem;
+    border: 1px solid rgba(140, 107, 39, 0.3);
+    pointer-events: none;
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ornament span {
+    height: 1px;
+    width: 2.25rem;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+
+  .ornament span:last-child {
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+
+  .ornament i {
+    width: 0.4rem;
+    height: 0.4rem;
+    background: var(--gold-soft);
+    transform: rotate(45deg);
+    display: inline-block;
+  }
+
+  .hero {
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0 0 1.25rem;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coral-deep);
+  }
+
+  .numeral-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .numeral {
+    font-family: var(--font-display);
+    font-size: clamp(5.5rem, 26vw, 8rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(140, 107, 39, 0.3);
+    position: absolute;
+    top: -0.6em;
+    letter-spacing: -0.02em;
+    opacity: 0.5;
+    user-select: none;
+  }
+
+  .name {
+    position: relative;
+    margin: 1.9rem 0 0.35rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.1rem, 8vw, 3rem);
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold) 70%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: var(--gold);
+  }
+
+  .sub {
+    margin: 0;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 2.1rem 0;
+  }
+
+  .divider span {
+    flex: 1;
+    height: 1px;
+    background: var(--hairline);
+  }
+
+  .divider i {
+    width: 0.35rem;
+    height: 0.35rem;
+    background: var(--coral);
+    transform: rotate(45deg);
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .message {
+    text-align: center;
+  }
+
+  .message p {
+    margin: 0 0 0.9rem;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--ink);
+    max-width: 34ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .invite-line {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+  }
+
+  .detail-row {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+  }
+
+  .label {
+    margin: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--coral-deep);
+  }
+
+  .value {
+    margin: 0;
+    font-size: 1.08rem;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .rsvp {
+    text-align: center;
+  }
+
+  .rsvp h2 {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 6vw, 2rem);
+    color: var(--gold);
+  }
+
+  .rsvp-sub {
+    margin: 0 0 1.6rem;
+    color: var(--ink-muted);
+    font-size: 0.96rem;
+  }
+
+  .field {
+    text-align: left;
+    margin-bottom: 1.15rem;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--coral-deep);
+    margin-bottom: 0.5rem;
+  }
+
+  input[type="text"],
+  textarea {
+    width: 100%;
+    background: rgba(216, 195, 176, 0.25);
+    border: 1px solid var(--hairline);
+    border-radius: 1px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    padding: 0.7rem 0.8rem;
+    outline-offset: 2px;
+  }
+
+  input[type="text"]::placeholder,
+  textarea::placeholder {
+    color: rgba(94, 76, 62, 0.5);
+  }
+
+  input[type="text"]:focus-visible,
+  textarea:focus-visible,
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--gold);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 3.2rem;
+  }
+
+  .companion-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .companion-row input {
+    flex: 1;
+  }
+
+  .remove-btn {
+    flex-shrink: 0;
+    width: 2.4rem;
+    background: transparent;
+    border: 1px solid var(--hairline);
+    color: var(--coral-deep);
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 1px;
+  }
+
+  .remove-btn:hover {
+    background: rgba(232, 96, 76, 0.12);
+  }
+
+  .add-btn {
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    font-size: 0.9rem;
+    font-style: italic;
+    cursor: pointer;
+    padding: 0.2rem 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(140, 107, 39, 0.45);
+  }
+
+  .add-btn:hover {
+    color: var(--coral-deep);
+  }
+
+  .form-notice {
+    color: var(--coral-deep);
+    font-size: 0.88rem;
+    text-align: center;
+    margin: 0 0 1rem;
+  }
+
+  .send-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.6rem;
+  }
+
+  .send-btn {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.85rem 1rem;
+    border-radius: 1px;
+    cursor: pointer;
+    border: 1px solid var(--gold);
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+    color: var(--ink);
+    font-weight: 600;
+    transition: transform 0.15s ease;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .send-btn-alt {
+    background: transparent;
+    color: var(--coral-deep);
+    border: 1px solid rgba(232, 96, 76, 0.5);
+    font-weight: 400;
+  }
+
+  .send-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .confirm-notice {
+    margin: 1.1rem 0 0;
+    text-align: center;
+    color: var(--gold);
+    font-style: italic;
+    font-size: 0.95rem;
+  }
+
+  .footer {
+    margin-top: 2.3rem;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .footer p {
+    margin: 0 0 0.3rem;
+  }
+
+  .footer-love {
+    font-style: italic;
+    color: var(--coral-deep);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card {
+      animation: rise 0.7s ease both;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .send-btn {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    var EMAIL = "kimberlyfvalera@gmail.com";
+    var PHONE = "+639178294183";
+    var EVENT_LINE =
+      "Agosto 1, 2026 (Sabado), 6:00 ng gabi sa Bravissimo Events & Cafe, Chesnut cor Coconut, Greenwoods Executive Village.";
+
+    var companionsList = document.getElementById("companionsList");
+    var addCompanionBtn = document.getElementById("addCompanion");
+    var guestNameInput = document.getElementById("guestName");
+    var guestMessageInput = document.getElementById("guestMessage");
+    var formNotice = document.getElementById("formNotice");
+    var confirmNotice = document.getElementById("confirmNotice");
+
+    function makeCompanionRow() {
+      var row = document.createElement("div");
+      row.className = "companion-row";
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.className = "companion-input";
+      input.placeholder = "Pangalan ng kasama";
+
+      var removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "remove-btn";
+      removeBtn.setAttribute("aria-label", "Alisin ang kasamang ito");
+      removeBtn.innerHTML = "&times;";
+      removeBtn.addEventListener("click", function () {
+        row.remove();
+      });
+
+      row.appendChild(input);
+      row.appendChild(removeBtn);
+      return row;
+    }
+
+    addCompanionBtn.addEventListener("click", function () {
+      companionsList.appendChild(makeCompanionRow());
+    });
+
+    companionsList
+      .querySelectorAll(".remove-btn")
+      .forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          btn.closest(".companion-row").remove();
+        });
+      });
+
+    function collectCompanions() {
+      return Array.from(companionsList.querySelectorAll(".companion-input"))
+        .map(function (el) {
+          return el.value.trim();
+        })
+        .filter(Boolean);
+    }
+
+    function buildMessage() {
+      var name = guestNameInput.value.trim();
+      var companions = collectCompanions();
+      var note = guestMessageInput.value.trim();
+
+      var lines = [];
+      lines.push("Pangalan: " + name);
+      lines.push(
+        "Kasama: " + (companions.length ? companions.join(", ") : "Mag-isa lang")
+      );
+      if (note) {
+        lines.push("Mensahe: " + note);
+      }
+      lines.push("");
+      lines.push(EVENT_LINE);
+
+      return { name: name, text: lines.join("\n") };
+    }
+
+    function validate() {
+      var name = guestNameInput.value.trim();
+      formNotice.hidden = !!name;
+      if (!name) {
+        guestNameInput.focus();
+      }
+      return !!name;
+    }
+
+    function showConfirm() {
+      confirmNotice.hidden = false;
+    }
+
+    document.getElementById("sendEmail").addEventListener("click", function (e) {
+      if (!validate()) {
+        e.preventDefault();
+        return;
+      }
+      var msg = buildMessage();
+      var subject = encodeURIComponent(
+        "RSVP – Ika-70 Kaarawan ni Aling Baby"
+      );
+      var body = encodeURIComponent(msg.text);
+      this.href = "mailto:" + EMAIL + "?subject=" + subject + "&body=" + body;
+      showConfirm();
+    });
+
+    document.getElementById("sendSms").addEventListener("click", function (e) {
+      if (!validate()) {
+        e.preventDefault();
+        return;
+      }
+      var msg = buildMessage();
+      var body = encodeURIComponent(
+        "RSVP: " + msg.text.replace(/\n/g, " | ")
+      );
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      var separator = isIOS ? "&body=" : "?body=";
+      this.href = "sms:" + PHONE + separator + body;
+      showConfirm();
+    });
+  })();
+</script>
