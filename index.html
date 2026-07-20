@@ -163,7 +163,7 @@
     --ink: #3a2c22;
     --ink-muted: #5e4c3e;
     --hairline: rgba(140, 107, 39, 0.38);
-    --rail-w: clamp(3.4rem, 16vw, 10rem);
+    --rail-w: clamp(7rem, 22vw, 17rem);
     --font-display: "Didot", "Bodoni MT", "Big Caslon", "Playfair Display",
       Georgia, "Iowan Old Style", serif;
     --font-body: "Athelas", "Iowan Old Style", Georgia, "Times New Roman",
@@ -251,7 +251,8 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: clamp(1.5rem, 5vw, 4rem) calc(var(--rail-w) + 0.75rem);
+    gap: 1.5rem;
+    padding: clamp(1.5rem, 5vw, 4rem) 1rem;
     background: radial-gradient(
         circle at 50% -10%,
         #f6dcc9 0%,
@@ -420,20 +421,19 @@
   }
 
   .side-rail {
-    position: fixed;
-    top: 0;
-    bottom: 0;
+    position: sticky;
+    top: 1rem;
     width: var(--rail-w);
+    height: calc(100vh - 2rem);
     overflow: hidden;
+    flex-shrink: 0;
     z-index: 1;
   }
 
-  .side-rail-left {
-    left: 0;
-  }
-
-  .side-rail-right {
-    right: 0;
+  @media (max-width: 900px) {
+    .side-rail {
+      display: none;
+    }
   }
 
   .rail-track {
@@ -1033,13 +1033,35 @@
     }
 
     // --- Background music via YouTube (hidden player, audio only) ---
+    // Browsers block audio-with-sound autoplay before any user gesture, so
+    // this starts muted immediately, then unmutes on the guest's first tap
+    // or scroll anywhere on the page (not just the music button itself).
     var YT_VIDEO_ID = "8NVYNAEyw5E";
     var musicToggle = document.getElementById("musicToggle");
     var musicLabel = musicToggle.querySelector(".music-label");
     var ytPlayer = null;
     var ytReady = false;
     var musicPlaying = false;
-    var pendingPlay = false;
+    var audible = false;
+
+    function setMusicUI(on) {
+      musicPlaying = on;
+      musicToggle.setAttribute("aria-pressed", on ? "true" : "false");
+      musicToggle.classList.toggle("is-playing", on);
+      musicLabel.textContent = on ? "Naka-on" : "Tugtog";
+    }
+
+    function goAudible() {
+      if (!ytReady || audible) return;
+      audible = true;
+      ytPlayer.unMute();
+      ytPlayer.playVideo();
+      setMusicUI(true);
+    }
+
+    ["click", "touchstart", "keydown", "scroll"].forEach(function (evt) {
+      document.addEventListener(evt, goAudible, { once: true, passive: true });
+    });
 
     window.onYouTubeIframeAPIReady = function () {
       ytPlayer = new YT.Player("ytPlayer", {
@@ -1047,7 +1069,8 @@
         width: "0",
         videoId: YT_VIDEO_ID,
         playerVars: {
-          autoplay: 0,
+          autoplay: 1,
+          mute: 1,
           controls: 0,
           loop: 1,
           playlist: YT_VIDEO_ID,
@@ -1055,10 +1078,7 @@
         events: {
           onReady: function () {
             ytReady = true;
-            if (pendingPlay) {
-              ytPlayer.playVideo();
-              pendingPlay = false;
-            }
+            ytPlayer.playVideo();
           },
         },
       });
@@ -1066,22 +1086,13 @@
 
     musicToggle.addEventListener("click", function () {
       if (musicPlaying) {
-        musicPlaying = false;
-        musicToggle.setAttribute("aria-pressed", "false");
-        musicToggle.classList.remove("is-playing");
-        musicLabel.textContent = "Tugtog";
+        setMusicUI(false);
         if (ytReady) ytPlayer.pauseVideo();
-        pendingPlay = false;
+      } else if (audible) {
+        setMusicUI(true);
+        if (ytReady) ytPlayer.playVideo();
       } else {
-        musicPlaying = true;
-        musicToggle.setAttribute("aria-pressed", "true");
-        musicToggle.classList.add("is-playing");
-        musicLabel.textContent = "Naka-on";
-        if (ytReady) {
-          ytPlayer.playVideo();
-        } else {
-          pendingPlay = true;
-        }
+        goAudible();
       }
     });
 
