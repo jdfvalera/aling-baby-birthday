@@ -1,3 +1,9 @@
+<canvas id="fxCanvas" class="fx-canvas" aria-hidden="true"></canvas>
+<button type="button" id="musicToggle" class="music-toggle" aria-pressed="false">
+  <span class="music-icon" aria-hidden="true">&#9835;</span>
+  <span class="music-label">Tugtog</span>
+</button>
+
 <main class="invite">
   <div class="card">
     <div class="ornament">
@@ -19,11 +25,10 @@
 
     <section class="message">
       <p>
-        Pitumpung taon ng pagmamahal, kwento, at biyaya — sapat na dahilan para
-        magtipon-tipon, magsaya, at magpasalamat. Sama-sama nating gawing
-        makulay ang araw na ito para kay Aling Baby.
+        70 years na pala si Aling Baby! Ang dami na niyang kwento, tawa, at
+        pagmamahal — kaya gusto namin na makasama ka sa pagdiriwang na 'to.
       </p>
-      <p class="invite-line">Kasama ka namin sa munting handaan na ito!</p>
+      <p class="invite-line">Dumating ka lang, bahala na kami sa saya!</p>
     </section>
 
     <div class="divider"><span></span><i></i><span></span></div>
@@ -52,6 +57,8 @@
       <h2>Sasama ka ba?</h2>
       <p class="rsvp-sub">
         Paki-sagot na lang para malaman namin kung sino ang aming aabangan.
+        <br />
+        Deadline ng RSVP: <strong>Hulyo 25, 2026</strong>.
       </p>
 
       <div class="field">
@@ -116,7 +123,7 @@
     </section>
 
     <footer class="footer">
-      <p>Paki-sagot bago sumapit ang Agosto 1 para makapaghanda kami nang maayos.</p>
+      <p>Paki-sagot bago sumapit ang Hulyo 25 para makapaghanda kami nang maayos.</p>
       <p class="footer-love">Mahal na mahal ka namin, Aling Baby!</p>
     </footer>
   </div>
@@ -149,7 +156,64 @@
     margin: 0;
   }
 
+  .fx-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .music-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--panel);
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    color: var(--gold);
+    cursor: pointer;
+    box-shadow: 0 0.4rem 1rem rgba(58, 44, 34, 0.18);
+  }
+
+  .music-toggle .music-icon {
+    font-size: 1rem;
+    display: inline-block;
+  }
+
+  .music-toggle[aria-pressed="true"] {
+    color: var(--coral-deep);
+    border-color: rgba(232, 96, 76, 0.5);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .music-toggle.is-playing .music-icon {
+      animation: musicPulse 0.6s ease-in-out infinite;
+    }
+
+    @keyframes musicPulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.3);
+      }
+    }
+  }
+
   .invite {
+    position: relative;
+    z-index: 1;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -261,7 +325,13 @@
     font-size: clamp(2.1rem, 8vw, 3rem);
     letter-spacing: 0.01em;
     text-wrap: balance;
-    background: linear-gradient(180deg, var(--gold-soft), var(--gold) 70%);
+    background: linear-gradient(
+      100deg,
+      var(--gold) 25%,
+      var(--gold-soft) 45%,
+      var(--gold) 65%
+    );
+    background-size: 250% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: var(--gold);
@@ -537,11 +607,44 @@
         transform: translateY(0);
       }
     }
+
+    .name {
+      animation: shimmer 3.5s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    .numeral {
+      animation: pulseGlow 4s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%,
+      100% {
+        opacity: 0.5;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.72;
+        transform: scale(1.03);
+      }
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .send-btn {
       transition: none;
+    }
+
+    .fx-canvas {
+      display: none;
     }
   }
 </style>
@@ -628,6 +731,7 @@
 
     function showConfirm() {
       confirmNotice.hidden = false;
+      triggerConfetti();
     }
 
     function submitToFormspree(msg) {
@@ -667,6 +771,179 @@
           sendBtn.disabled = false;
           sendBtnLabel.textContent = "Ipadala ang RSVP";
         });
+    });
+
+    // --- Ambient sparkles + confetti burst ---
+    var prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    var fxCanvas = document.getElementById("fxCanvas");
+    var fx = fxCanvas.getContext("2d");
+    var dpr = window.devicePixelRatio || 1;
+    var sparkles = [];
+    var confettiPieces = [];
+    var SPARKLE_COLORS = ["#d2aa5c", "#8c6b27", "#e8604c"];
+    var CONFETTI_COLORS = ["#8c6b27", "#d2aa5c", "#e8604c", "#f2e6ce"];
+
+    function hexToRgba(hex, alpha) {
+      var r = parseInt(hex.slice(1, 3), 16);
+      var g = parseInt(hex.slice(3, 5), 16);
+      var b = parseInt(hex.slice(5, 7), 16);
+      return "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
+    }
+
+    function resizeCanvas() {
+      dpr = window.devicePixelRatio || 1;
+      fxCanvas.width = window.innerWidth * dpr;
+      fxCanvas.height = window.innerHeight * dpr;
+      fxCanvas.style.width = window.innerWidth + "px";
+      fxCanvas.style.height = window.innerHeight + "px";
+      fx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function spawnSparkle() {
+      return {
+        x: Math.random() * window.innerWidth,
+        y: window.innerHeight + Math.random() * 40,
+        r: 1 + Math.random() * 1.8,
+        speed: 0.25 + Math.random() * 0.4,
+        drift: (Math.random() - 0.5) * 0.3,
+        color:
+          SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)],
+        twinkle: Math.random() * Math.PI * 2,
+      };
+    }
+
+    function triggerConfetti() {
+      if (prefersReducedMotion) return;
+      var originX = window.innerWidth / 2;
+      var originY = window.innerHeight * 0.35;
+      for (var i = 0; i < 90; i++) {
+        confettiPieces.push({
+          x: originX + (Math.random() - 0.5) * 60,
+          y: originY,
+          vx: (Math.random() - 0.5) * 6,
+          vy: -Math.random() * 6 - 2,
+          size: 4 + Math.random() * 5,
+          rotation: Math.random() * Math.PI,
+          rotationSpeed: (Math.random() - 0.5) * 0.3,
+          color:
+            CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+          life: 0,
+          maxLife: 90 + Math.random() * 40,
+        });
+      }
+    }
+
+    function tick() {
+      fx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      sparkles.forEach(function (p) {
+        p.y -= p.speed;
+        p.x += p.drift;
+        p.twinkle += 0.05;
+        if (p.y < -10) {
+          var fresh = spawnSparkle();
+          fresh.y = window.innerHeight + 10;
+          Object.assign(p, fresh);
+        }
+        var alpha = 0.35 + 0.35 * Math.sin(p.twinkle);
+        fx.beginPath();
+        fx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        fx.fillStyle = hexToRgba(p.color, alpha);
+        fx.fill();
+      });
+
+      confettiPieces = confettiPieces.filter(function (c) {
+        return c.life < c.maxLife;
+      });
+      confettiPieces.forEach(function (c) {
+        c.vy += 0.15;
+        c.x += c.vx;
+        c.y += c.vy;
+        c.rotation += c.rotationSpeed;
+        c.life += 1;
+        var alpha = Math.max(1 - c.life / c.maxLife, 0);
+        fx.save();
+        fx.translate(c.x, c.y);
+        fx.rotate(c.rotation);
+        fx.fillStyle = hexToRgba(c.color, alpha);
+        fx.fillRect(-c.size / 2, -c.size / 4, c.size, c.size / 2);
+        fx.restore();
+      });
+
+      requestAnimationFrame(tick);
+    }
+
+    if (!prefersReducedMotion) {
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+      for (var s = 0; s < 36; s++) {
+        var sp = spawnSparkle();
+        sp.y = Math.random() * window.innerHeight;
+        sparkles.push(sp);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // --- Synthesized music-box loop (no external audio, so no licensing to worry about) ---
+    var musicToggle = document.getElementById("musicToggle");
+    var musicLabel = musicToggle.querySelector(".music-label");
+    var audioCtx = null;
+    var musicTimer = null;
+    var musicPlaying = false;
+    var MELODY = [
+      523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25, 659.25, 783.99,
+      880.0, 783.99, 659.25,
+    ];
+    var NOTE_DUR = 0.42;
+
+    function ensureAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playNote(freq, startTime, duration) {
+      var ctx = ensureAudioCtx();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(0.06, startTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + duration + 0.05);
+    }
+
+    function scheduleLoop() {
+      var ctx = ensureAudioCtx();
+      var startTime = ctx.currentTime + 0.05;
+      MELODY.forEach(function (freq, i) {
+        playNote(freq, startTime + i * NOTE_DUR, NOTE_DUR * 0.9);
+      });
+      musicTimer = setTimeout(scheduleLoop, MELODY.length * NOTE_DUR * 1000);
+    }
+
+    musicToggle.addEventListener("click", function () {
+      var ctx = ensureAudioCtx();
+      if (musicPlaying) {
+        clearTimeout(musicTimer);
+        musicPlaying = false;
+        musicToggle.setAttribute("aria-pressed", "false");
+        musicToggle.classList.remove("is-playing");
+        musicLabel.textContent = "Tugtog";
+      } else {
+        if (ctx.state === "suspended") ctx.resume();
+        scheduleLoop();
+        musicPlaying = true;
+        musicToggle.setAttribute("aria-pressed", "true");
+        musicToggle.classList.add("is-playing");
+        musicLabel.textContent = "Naka-on";
+      }
     });
   })();
 </script>
