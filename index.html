@@ -86,6 +86,8 @@
         Paki-sagot na lang para malaman namin kung sino ang aming aabangan.
         <br />
         Deadline ng RSVP: <strong>Hulyo 25, 2026</strong>.
+        <br />
+        May <strong>1 upuan</strong> na nakalaan para sa iyo.
       </p>
 
       <div class="field">
@@ -96,26 +98,6 @@
           placeholder="Hal. Maria Santos"
           autocomplete="name"
         />
-      </div>
-
-      <div class="field">
-        <label>Sino ang kasama mo? (isa lang po)</label>
-        <div class="companions" id="companionsList">
-          <div class="companion-row">
-            <input
-              type="text"
-              class="companion-input"
-              placeholder="Pangalan ng kasama (kung meron)"
-            />
-            <button
-              type="button"
-              class="remove-btn"
-              aria-label="Alisin ang kasamang ito"
-            >
-              &times;
-            </button>
-          </div>
-        </div>
       </div>
 
       <div class="field">
@@ -714,31 +696,6 @@
     min-height: 3.2rem;
   }
 
-  .companion-row {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .companion-row input {
-    flex: 1;
-  }
-
-  .remove-btn {
-    flex-shrink: 0;
-    width: 2.4rem;
-    background: transparent;
-    border: 1px solid var(--hairline);
-    color: var(--coral-deep);
-    font-size: 1.1rem;
-    cursor: pointer;
-    border-radius: 1px;
-  }
-
-  .remove-btn:hover {
-    background: rgba(232, 96, 76, 0.12);
-  }
-
   .form-notice {
     color: var(--coral-deep);
     font-size: 0.88rem;
@@ -929,7 +886,6 @@
   (function () {
     var FORMSPREE_ENDPOINT = "https://formspree.io/f/xaqrjobp";
 
-    var companionsList = document.getElementById("companionsList");
     var guestNameInput = document.getElementById("guestName");
     var guestMessageInput = document.getElementById("guestMessage");
     var formNotice = document.getElementById("formNotice");
@@ -938,32 +894,12 @@
     var sendBtn = document.getElementById("sendRsvp");
     var sendBtnLabel = sendBtn.querySelector(".send-btn-label");
 
-    companionsList
-      .querySelectorAll(".remove-btn")
-      .forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          btn.closest(".companion-row").remove();
-        });
-      });
-
-    function collectCompanions() {
-      return Array.from(companionsList.querySelectorAll(".companion-input"))
-        .map(function (el) {
-          return el.value.trim();
-        })
-        .filter(Boolean);
-    }
-
     function buildMessage() {
       var name = guestNameInput.value.trim();
-      var companions = collectCompanions();
       var note = guestMessageInput.value.trim();
 
       return {
         name: name,
-        companions: companions.length
-          ? companions.join(", ")
-          : "Mag-isa lang",
         note: note,
       };
     }
@@ -991,7 +927,6 @@
         },
         body: JSON.stringify({
           Pangalan: msg.name,
-          Kasama: msg.companions,
           Mensahe: msg.note || "(wala)",
         }),
       }).then(function (res) {
