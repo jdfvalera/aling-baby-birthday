@@ -138,6 +138,19 @@
       </p>
     </section>
 
+    <div class="divider"><span></span><i></i><span></span></div>
+
+    <section class="wall">
+      <h2>Mga Mensahe</h2>
+      <p class="wall-sub">Ilang mainit na bati mula sa mga mahal namin.</p>
+
+      <div class="wall-grid" id="wallGrid">
+        <p class="wall-empty" id="wallEmpty">
+          Wala pa dito &mdash; ikaw pa ang mauuna!
+        </p>
+      </div>
+    </section>
+
     <footer class="footer">
       <p>Paki-sagot bago sumapit ang Hulyo 25 para makapaghanda kami nang maayos.</p>
       <p class="footer-love">Mahal na mahal ka namin, Aling Baby!</p>
@@ -461,7 +474,7 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .rail-track {
-      animation: railUp 70s linear infinite;
+      animation: railUp 160s linear infinite;
     }
 
     .rail-track.rail-reverse {
@@ -718,6 +731,60 @@
     text-align: center;
     color: var(--coral-deep);
     font-size: 0.9rem;
+  }
+
+  .wall {
+    text-align: center;
+  }
+
+  .wall h2 {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 6vw, 2rem);
+    color: var(--gold);
+  }
+
+  .wall-sub {
+    margin: 0 0 1.6rem;
+    color: var(--ink-muted);
+    font-size: 0.96rem;
+  }
+
+  .wall-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .wall-empty {
+    color: var(--ink-muted);
+    font-style: italic;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .wall-card {
+    text-align: left;
+    background: rgba(216, 195, 176, 0.2);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    padding: 1rem 1.15rem;
+  }
+
+  .wall-message {
+    margin: 0 0 0.5rem;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .wall-name {
+    margin: 0;
+    text-align: right;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--coral-deep);
   }
 
   .footer {
