@@ -41,6 +41,18 @@
 
     <div class="divider"><span></span><i></i><span></span></div>
 
+    <section class="photos">
+      <p class="label photos-label">Mga Alaala</p>
+      <div class="marquee-row">
+        <div class="marquee-track" id="marqueeTrack1"></div>
+      </div>
+      <div class="marquee-row">
+        <div class="marquee-track marquee-reverse" id="marqueeTrack2"></div>
+      </div>
+    </section>
+
+    <div class="divider"><span></span><i></i><span></span></div>
+
     <section class="details">
       <div class="detail-row">
         <p class="label">Petsa</p>
@@ -133,10 +145,14 @@
     <footer class="footer">
       <p>Paki-sagot bago sumapit ang Hulyo 25 para makapaghanda kami nang maayos.</p>
       <p class="footer-love">Mahal na mahal ka namin, Aling Baby!</p>
-      <a href="larawan.html" class="gallery-link">Tignan ang mga larawan ni Aling Baby &rarr;</a>
     </footer>
   </div>
 </main>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Isara">&times;</button>
+  <img id="lightboxImg" src="" alt="Larawan ni Aling Baby" />
+</div>
 
 <style>
   :root {
@@ -395,6 +411,112 @@
     color: var(--gold);
   }
 
+  .photos-label {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .marquee-row {
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .marquee-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 0.6rem;
+    width: max-content;
+  }
+
+  .marquee-track img {
+    height: 6.5rem;
+    width: auto;
+    border-radius: 2px;
+    border: 1px solid var(--hairline);
+    box-shadow: 0 0.3rem 0.8rem rgba(58, 44, 34, 0.15);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .marquee-track img:hover {
+    outline: 2px solid var(--gold);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .marquee-track {
+      animation: marqueeLeft 55s linear infinite;
+    }
+
+    .marquee-track.marquee-reverse {
+      animation-name: marqueeRight;
+    }
+
+    .marquee-row:hover .marquee-track {
+      animation-play-state: paused;
+    }
+
+    @keyframes marqueeLeft {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes marqueeRight {
+      from {
+        transform: translateX(-50%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-row {
+      overflow-x: auto;
+    }
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(23, 19, 14, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    z-index: 50;
+  }
+
+  .lightbox[hidden] {
+    display: none;
+  }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 2px;
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.5);
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.5rem;
+    background: transparent;
+    border: none;
+    color: var(--panel);
+    font-size: 2.2rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
   .details {
     display: flex;
     flex-direction: column;
@@ -598,19 +720,6 @@
 
   .footer-love {
     font-style: italic;
-    color: var(--coral-deep);
-  }
-
-  .gallery-link {
-    display: inline-block;
-    margin-top: 1rem;
-    color: var(--gold);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: rgba(140, 107, 39, 0.45);
-  }
-
-  .gallery-link:hover {
     color: var(--coral-deep);
   }
 
@@ -966,6 +1075,60 @@
         musicToggle.classList.add("is-playing");
         musicLabel.textContent = "Naka-on";
       }
+    });
+
+    // --- Photo marquee + lightbox ---
+    var TOTAL_PHOTOS = 44;
+    var HALF = TOTAL_PHOTOS / 2;
+    var track1 = document.getElementById("marqueeTrack1");
+    var track2 = document.getElementById("marqueeTrack2");
+    var lightbox = document.getElementById("lightbox");
+    var lightboxImg = document.getElementById("lightboxImg");
+    var lightboxClose = document.getElementById("lightboxClose");
+
+    function photoSrc(n) {
+      var num = n < 10 ? "0" + n : "" + n;
+      return "photos/baby-" + num + ".jpg";
+    }
+
+    function openLightbox(src) {
+      lightboxImg.src = src;
+      lightbox.hidden = false;
+    }
+
+    function fillTrack(track, start, end) {
+      var srcs = [];
+      for (var n = start; n <= end; n++) {
+        srcs.push(photoSrc(n));
+      }
+      // duplicate the list so the CSS animation (0 to -50%) loops seamlessly
+      var doubled = srcs.concat(srcs);
+      doubled.forEach(function (src, idx) {
+        var img = document.createElement("img");
+        img.src = src;
+        img.alt = "Larawan ni Aling Baby";
+        img.loading = idx < srcs.length ? "eager" : "lazy";
+        img.addEventListener("click", function () {
+          openLightbox(src);
+        });
+        track.appendChild(img);
+      });
+    }
+
+    fillTrack(track1, 1, HALF);
+    fillTrack(track2, HALF + 1, TOTAL_PHOTOS);
+
+    function closeLightbox() {
+      lightbox.hidden = true;
+      lightboxImg.src = "";
+    }
+
+    lightboxClose.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", function (e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeLightbox();
     });
   })();
 </script>
